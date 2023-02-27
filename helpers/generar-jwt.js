@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// jwt trabaja con callbacks y en base a promesas
 const generarJWT = ( uid = '' ) => {
 
     return new Promise( ( resolve, reject ) => {
@@ -14,6 +13,7 @@ const generarJWT = ( uid = '' ) => {
             if ( err ) {
                 console.log(err);
                 reject('No se pudo generar el Token');
+
             } else {
                 resolve( token );
             }

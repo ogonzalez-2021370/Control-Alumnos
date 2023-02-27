@@ -1,3 +1,5 @@
+/*
+
 const Role = require('../models/role');
 const Curso = require('../models/cursos')
 const Maestro = require('../models/maestros');
@@ -74,3 +76,5 @@ module.exports = {
     existeMaestroPorId,
     existeAlumnoPorId
 }
+
+*/

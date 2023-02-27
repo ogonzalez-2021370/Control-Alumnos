@@ -1,59 +1,56 @@
-const { request, response } = require('express');
+const {request, response} = require('express');
+const User = require('../models/user');
 const bcryptjs = require('bcryptjs');
-
-const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/generar-jwt');
 
-const login = async( req = request, res = response ) => {
 
-    const { correo, password } = req.body;
+const login = async(req = request, res = response) => {
+    const {email, password} = req.body;
 
     try {
-        
-        //Verificar si el correo existe
-        const usuario = await Usuario.findOne( { correo } );
-
-        if ( !usuario ) {
-            return res.status(404).json({
-                msg: 'Correo de usuario no existe en la base de datos 404'
-            });
-        }
-    
-        //Si el usuario esta activo (usuario.estado === false)
-        if ( usuario.estado === false ) {
+        // Verify if the email exists
+        const user = await User.findOne({email});
+        if (!user) {
             return res.status(400).json({
-                msg: 'La cuenta del usuario esta inactivo'
-            });
+                msg: 'email no valido'
+            })
         }
-    
-        //Verificar la password el usuario    //comporeSync, encripta ambas passwords y las compara
-        const validarPassword = bcryptjs.compareSync( password, usuario.password );
-        if ( !validarPassword ) {
+        //Verify if the user exists
+
+        if (!user){
+            return res.status(202).json({
+                msg: 'Usuario no encontrado'
+            })
+        }
+            
+        // Verify the password of the user
+
+        //const validarPassword = bcryptjs.compareSync(password, user.password);
+        if (!bcryptjs.compareSync(password, user.password)) {
             return res.status(400).json({
-                msg: 'La password es incorrecta'
-            });
+                msg: 'contraseña no valida'
+
+            })
         }
 
-        //Generar JWT
-        const token = await generarJWT( usuario.id );
+        const token = await generarJWT(user.id);
     
         res.json({
-            msg: 'Login Auth Funciona!',
-            correo, password,
+            msg: 'Inicio de sesión exitoso',
+            email,
+            password,
             token
-        });
-
+        })
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: 'Hable con el admin'
+            msg: 'Comunicate con el ADMIN'
         })
     }
 
-
 }
 
-
-module.exports = {
+module.exports= {
     login
 }

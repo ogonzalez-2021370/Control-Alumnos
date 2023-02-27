@@ -1,27 +1,31 @@
-const { request, response  } = require('express');
-
-const esAdminRole = ( req = request, res = response, next ) => {
-
-    if ( !req.usuario ) {
+const {request, response} = require('express');
+const esMaestroRole = (req = request, res = response, next) => {
+    if (!req.user) {
         return res.status(500).json({
-            msg: 'Se quiere verficar el role sin validar el token primero'
-        });
+            msg: 'No puede validar su rol porque no ha iniciado sesión.'
+        })
     }
 
-    //Verificación solo el rol de Admi puede realizar la eliminación
-    //Si cumple con el rol de admin se envia al controllador deleteUsuario
-    const { rol, nombre  } = req.usuario
-    //if ( rol !== 'ADMIN_ROLE') {
-    if ( rol !== 'ROL_ALUMNO') {
+    const {role, nombre} = req.user
+    if(role != 'ROL_MAESTRO'){
         return res.status(401).json({
-            msg: `${ nombre } no es Profesor - No puede eliminar`
-        });
+            msg:  'Si no eres profesor, no puedes hacer esto.'
+        })
     }
+
+
 
     next();
-
 }
 
+const esAlumnoRole = (req = request, res = response) => {
+    if (!req.user) {
+        return res.status(500).json({
+            msg: 'No se puede validar tu rol porque no has iniciado sesión.'
+        })
+    }
+}
 module.exports = {
-    esAdminRole
+    esMaestroRole,
+    esAlumnoRole
 }
